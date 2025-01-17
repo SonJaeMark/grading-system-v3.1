@@ -282,7 +282,7 @@ int loginUser(User *user)
     }
 
 
-    suppressErrMes(1);
+    suppressErrMes(0);
 
     if(getTeacherById(id, user->teacher))
     {

@@ -5,7 +5,7 @@
 #include "userfilelib.h"
 #include "stringlib.h"
 
-int flag = 0;
+int notSuppress = 0;
 
 /**
  * @brief Suppresses or enables error messages based on the input parameter.
@@ -21,9 +21,13 @@ int flag = 0;
  */
 int suppressErrMes(int isSuppress)
 {
-    flag = isSuppress;
+    int *flagPtr = &notSuppress;
+
+    *flagPtr = isSuppress > 0 ? 0 : 1;
+
+    notSuppress = isSuppress;
     // Return the suppression state (non-zero means suppress, zero means do not suppress)
-    return flag;
+    return notSuppress;
 }
 
 /**
@@ -341,7 +345,7 @@ int getTeacherById(int id, Teacher *teacher)
         }
     }
 
-    if(!isFound  && suppressErrMes)
+    if(!isFound  && notSuppress)
     {
         snprintf(buffer, sizeof(buffer) - 1, "Teacher with ID %d not found", id);
         printfERROR(buffer);
