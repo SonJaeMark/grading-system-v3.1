@@ -1,6 +1,6 @@
 id,first_name,last_name,date_of_birth,username,section,{student_list}
 240000,Megan Katherine,Fisher,08/27/1981,mkfisher,A7,0,0,0,0,0,0,0,0,0,0
-240001,Tammy Todd,Hull,9/3/1984,tthull,A8,240016,240011,0,240013,240014,240015,0,0,0,0
+240001,Tammy Todd,Hull,9/3/1984,tthull,A8,240016,240028,240010,240013,240029,240020,0,240017,240020,0
 240002,Tammy Michael,Snow,11/25/1978,tmsnow,A10,0,0,0,0,0,0,0,0,0,0
 240003,William Juan,Campos,01/30/1981,wjcampos,A2,0,0,0,0,0,0,0,0,0,0
 240004,Vanessa Amanda,Thornton,01/13/1974,vathornton,A9,0,0,0,0,0,0,0,0,0,0

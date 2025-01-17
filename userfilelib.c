@@ -5,6 +5,8 @@
 #include "userfilelib.h"
 #include "stringlib.h"
 
+int flag = 0;
+
 /**
  * @brief Suppresses or enables error messages based on the input parameter.
  *
@@ -19,8 +21,9 @@
  */
 int suppressErrMes(int isSuppress)
 {
+    flag = isSuppress;
     // Return the suppression state (non-zero means suppress, zero means do not suppress)
-    return isSuppress;
+    return flag;
 }
 
 /**
@@ -256,10 +259,11 @@ int getStudentById(int id, Student *student)
         }
     }
 
-    if(!isFound  && !suppressErrMes)
+    if(!isFound  && suppressErrMes)
     {
         snprintf(buffer, sizeof(buffer) - 1, "Student with ID %d not found", id);
         printfERROR(buffer);
+
     } 
     fclose(fptr);
     return isFound;
@@ -337,7 +341,7 @@ int getTeacherById(int id, Teacher *teacher)
         }
     }
 
-    if(!isFound  && !suppressErrMes)
+    if(!isFound  && suppressErrMes)
     {
         snprintf(buffer, sizeof(buffer) - 1, "Teacher with ID %d not found", id);
         printfERROR(buffer);
@@ -752,7 +756,7 @@ int savePassword(int id, char *password)
  */
 int getPasswordById(int id, char *password)
 {
-    disable(1);
+    disable(0);
     FILE *fptr; /**< File pointer for opening the password file */
     char idstr[10]; /**< Temporary string to hold the user ID as a string */
     char *delim = ","; /**< Delimiter used to separate ID and password in the file */

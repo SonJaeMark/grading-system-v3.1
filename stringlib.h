@@ -9,7 +9,8 @@ typedef enum TextColor
     YELLOW_TEXT = 33,
     BLUE_TEXT = 34
 } TextColor;
-
+void printActionMenu();
+int exitFromCurrAction(char *action);
 int disable(int isDisabled);
 void setColor(TextColor colorCode);
 void resetColor();

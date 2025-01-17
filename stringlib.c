@@ -12,6 +12,26 @@ int disable(int isDisabled)
     return isDisabled;
 }
 
+int exitFromCurrAction(char *action)
+{
+    if(strcmp("b", action) == 0)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+void printActionMenu()
+{
+    resetColor();
+    printNewLine(1);
+    printf("        : [1]Log out                         [2]View All My Students\n");
+    printf("        : [3]Add Student To Class            [4]Remove Student To Class\n");
+    printf("        : [5]View Grades Of Student By Id    [6]Give Grades\n"); 
+    printf("        : [7]View My Grades                  [8]Exit\n");
+    printf("Actions: ");
+}
+
 /**
  * @brief Sets the terminal text color.
  * 
@@ -255,7 +275,7 @@ void strtrim(char *in)
 char* fgetsm(char *in, int size, FILE *file)  
 {
     fgetsmINPUT();
-    if(!disable) printf(">> ");
+    // if(disable) printf(">> ");
 
     // Read a line of input from the file
     if (fgets(in, size, file) == NULL) 

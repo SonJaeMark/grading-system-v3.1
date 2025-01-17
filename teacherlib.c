@@ -184,15 +184,22 @@ int viewAllMyStudents(User *user) {
 
     // Check if the logged-in user is a student
     if (user->student->id != 0) {
-        printfWARNNING("You are not allowed to access this!");
+        printfWARNNING("You are not allowed to access this");
         return 0;
     }
 
     // Retrieve all students linked to the teacher's ID
     numOfStud = getAllStudentByTeacherId(user->teacher->id, user->student);
 
+    if(numOfStud == 0)
+    {
+        printfWARNNING("No student found");
+        return numOfStud;
+    }
+
     setColor(GREEN_TEXT);
     // Display the list of students
+    printf("Student List\n");
     for (int i = 0; i < numOfStud; i++) {
         printf("[%d] %d %s %s\n", i + 1, user->student[i].id, user->student[i].fname, user->student[i].lname);
     }
@@ -232,7 +239,7 @@ int addStudentToClass(User *user)
     // Check if the user is a student
     if (user->student->id != 0)
     {
-        printfWARNNING("!!You are not allowed to access this!");
+        printfWARNNING("You are not allowed to access this");
         return 0;
     }
 
@@ -250,7 +257,7 @@ int addStudentToClass(User *user)
     // Check if the class is already at maximum capacity
     if (currentStudCount == 10)
     {
-        printfWARNNING("Not able to add more students, you've reached the maximum student count allowable!");
+        printfWARNNING("Not able to add more students, you've reached the maximum student count allowable");
         return 0;
     }
 
@@ -266,6 +273,8 @@ int addStudentToClass(User *user)
         resetColor();
         printf("Enter the ID of the student(s) you want to add to your class (separate with space if more than 1): ");
         fgetsm(strBuffer, STR_CVS_LEN_OUT, stdin);
+
+        if(exitFromCurrAction(strBuffer)) return 0;
 
         // Parse student IDs from input
         inputIdCount = sscanf(
@@ -284,8 +293,24 @@ int addStudentToClass(User *user)
         }
         inputIdsHolderCount = inputIdsSize;
 
+        // test
+
+        for (int i = 0; i < studRetrievedCount; i++)
+        {
+            printf("studRetrieved[%d]: %d\n", i, studRetrieved[i]);
+        }
+        
+
         // Ensure the total count doesn't exceed the maximum allowed
         getUnique(studRetrieved, studRetrievedCount, inputIds, &inputIdsSize);
+
+        // test
+
+        for (int i = 0; i < inputIdsSize; i++)
+        {
+            printf("inputIds[%d]: %d\n", i, inputIds[i]);
+        }
+
         if (inputIdsSize + currentStudCount <= 10) break;
 
         printfWARNNING("Input ID/s exceed the maximum allowable student count.");
@@ -298,7 +323,7 @@ int addStudentToClass(User *user)
             strcpy(user->student->section, user->teacher->section) != NULL &&
             editStudent(user->student->id, user->student))
         {
-            snprintf(buffer, sizeof(buffer) - 1, "Student %d successfully added to your class!", inputIds[i]);
+            snprintf(buffer, sizeof(buffer) - 1, "Student %d successfully added to your class", inputIds[i]);
             printfSUCCESS(buffer);
             for (int j = 0; j < MAX_STUDENT_COUNT; j++)
             {
@@ -312,7 +337,7 @@ int addStudentToClass(User *user)
         }
         else
         {
-            snprintf(buffer, sizeof(buffer) - 1, "Student %d failed to add to your class!", inputIds[i]);
+            snprintf(buffer, sizeof(buffer) - 1, "Student %d failed to add to your class", inputIds[i]);
             printfERROR(buffer);
         }
     }
@@ -335,7 +360,7 @@ int addStudentToClass(User *user)
     }
     else
     {
-        printfERROR("Failed to edit teacher info, please contact the admin!");
+        printfERROR("Failed to edit teacher info, please contact the admin.");
         return 0;
     }
 
@@ -373,7 +398,7 @@ int removeStudentToClass(User *user)
     // Check if the user is a student
     if (user->student->id != 0)
     {
-        printfWARNNING("You are not allowed to access this!");
+        printfWARNNING("You are not allowed to access this");
         return 0;
     }
 
@@ -400,6 +425,8 @@ int removeStudentToClass(User *user)
         resetColor();
         printf("Enter the ID of the student(s) you want to remove from your class (separate with space if more than 1): ");
         fgetsm(strBuffer, STR_CVS_LEN_OUT, stdin);
+
+        if(exitFromCurrAction(strBuffer)) return 0;
 
         // Parse student IDs from input
         inputIdCount = sscanf(
@@ -471,7 +498,7 @@ int removeStudentToClass(User *user)
     }
     else
     {
-        printfERROR("Failed to edit teacher info, please contact the admin!");
+        printfERROR("Failed to edit teacher info, please contact the admin");
         return 0;
     }
 
@@ -503,7 +530,7 @@ void viewGradesOfStudentById(User *user)
     // Check if the user is a student
     if (user->student->id != 0)
     {
-        printfWARNNING("You are not allowed to access this!");
+        printfWARNNING("You are not allowed to access this");
         return;
     }
 
@@ -513,6 +540,8 @@ void viewGradesOfStudentById(User *user)
         resetColor();
         printf("Enter the ID of the student you want to see grades: ");
         fgetsm(strBuffer, STR_CVS_LEN_OUT, stdin);
+
+        if(exitFromCurrAction(strBuffer)) return;
 
         // Parse the input ID
         inputIdCount = sscanf(strBuffer, "%d", &inputIds[0]);
@@ -549,14 +578,16 @@ void viewGradesOfStudentById(User *user)
  */
 void giveGrades(User *user)
 {
-    int isExit = 0;                // Flag to check if student ID is valid
+    int isExit = 0;       
+    int isFound = 0;         
     int inputIdsSize = MAX_STUDENT_COUNT;
     char strBuffer[STR_CVS_LEN_OUT];
     int inputIds[inputIdsSize];
     int inputIdCount = 0;
-    float grades[7];
+    float grades[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    float grade = 0.0;
     char buffer[STR_CVS_LEN_OUT];
-
+    char subject[5];
     char subjects[6][4] = {
         "MAT", "SCI", "ENG", "FIL", "HIS", "PE"
     };
@@ -564,7 +595,7 @@ void giveGrades(User *user)
     // Check if the user is a student
     if (user->student->id != 0)
     {
-        printfWARNNING("You are not allowed to access this!\n");
+        printfWARNNING("You are not allowed to access this");
         return;
     }
 
@@ -574,6 +605,8 @@ void giveGrades(User *user)
         resetColor();
         printf("Enter the ID of the student you want to assign grades to: ");
         fgetsm(strBuffer, STR_CVS_LEN_OUT, stdin);
+
+        if(exitFromCurrAction(strBuffer)) return;
 
         // Parse the input ID
         inputIdCount = sscanf(strBuffer, "%d", &inputIds[0]);
@@ -596,13 +629,33 @@ void giveGrades(User *user)
     getStudentById(inputIds[0], user->student);
 
     // Prompt the teacher to enter grades for each subject
-    printf("Enter grades for each subject:\n");
-    for (int i = 0; i < 6; i++)
+    printf("Enter grades for each subject, type the subject and grades, for example 'MAT 98'.\n");
+    printf("[MAT]Math [SCI]Science [ENG]English [FIL]Filipino [HIS]History [PE]Physical Education.\n");
+    printf("Type [e]Exit to exit giving grades:\n");
+
+    for (int i = 0; i < NUM_GRADES; i++)
     {
-        printf("Enter grade for %s: ", subjects[i]);
+        printf("Enter sub and grade: ");
         fgetsm(strBuffer, STR_CVS_LEN_OUT, stdin);
-        sscanf(strBuffer, "%f", &grades[i]);
+
+        if(exitFromCurrAction(strBuffer)) return;
+        else if(strcmp("e", strBuffer) == 0) break;
+
+        sscanf(strBuffer, "%s %f", subject, &grade);
+
+        for(int i = 0; i < NUM_GRADES; i++)
+        {
+            if(strcmp(subjects[i], subject) == 0)
+            {
+                grades[i] = grade;
+                isFound = 1;
+            }
+        }
+
+        if(!isFound) printfWARNNING("Subject didn't recogized");
     }
+
+
 
     // Confirmation before saving grades
     while (1)
@@ -610,6 +663,8 @@ void giveGrades(User *user)
         resetColor();
         printf("Save changes? \n[y] Yes || [n] No: ");
         fgetsm(strBuffer, sizeof(strBuffer), stdin);
+        
+        if(exitFromCurrAction(strBuffer)) return;
 
         if (strcmp("y", strBuffer) == 0) break;
         else if (strcmp("n", strBuffer) == 0)
@@ -621,12 +676,12 @@ void giveGrades(User *user)
     }
 
     // Assign grades to the student object
-    user->student->grades.MATH = grades[0];
-    user->student->grades.SCI = grades[1];
-    user->student->grades.ENG = grades[2];
-    user->student->grades.FIL = grades[3];
-    user->student->grades.HIS = grades[4];
-    user->student->grades.PE = grades[5];
+    if(grades[0] != 0.0) user->student->grades.MATH = grades[0];
+    if(grades[1] != 0.0) user->student->grades.SCI = grades[1];
+    if(grades[2] != 0.0) user->student->grades.ENG = grades[2];
+    if(grades[3] != 0.0) user->student->grades.FIL = grades[3];
+    if(grades[4] != 0.0) user->student->grades.HIS = grades[4];
+    if(grades[5] != 0.0) user->student->grades.PE = grades[5];
 
     user->student->grades.AVE = getAve(user->student[0]);
 

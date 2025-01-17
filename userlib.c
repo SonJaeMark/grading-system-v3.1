@@ -25,7 +25,6 @@ int registerUser(User *user)
     int MM;
     int DD;
     int YYYY;
-    int id = 0;
 
     resetColor();
     printf("Registration:\n");
@@ -58,7 +57,8 @@ int registerUser(User *user)
     }
     strcpy(strBuffer, "\0");
 
-    printf("Please enter necessary details.\n");
+    printf("Please enter necessary details.");
+    printNewLine(2);
 
     printf("Enter firstname: ");
     fgetsm(strBuffer, sizeof(strBuffer), stdin);
@@ -96,7 +96,6 @@ int registerUser(User *user)
         if(strcmp(strBuffer, "A9") == 0) break;
         if(strcmp(strBuffer, "A10") == 0) break;
         
-
     } 
     isTeacher == 1 ? strcpy(user->teacher->section, strBuffer) : strcpy(user->student->section, "A0");
     strcpy(strBuffer, "\0");
@@ -114,7 +113,7 @@ int registerUser(User *user)
         
         printfWARNNING("Birthday format invalid");
     }
-
+    getchar();
 
     while (1)
     {
@@ -130,59 +129,68 @@ int registerUser(User *user)
         if (strcmp(passwordHolder, strBuffer) == 0) break;        
         printfERROR("Password not match.");
     }
-    
+    strcpy(strBuffer, "\0");
+
     while (1)
     {
         printf("Save info?\n");
         printf("[y]Yes || [n]No: ");
-        fgetsm(strBuffer, sizeof(strBuffer), stdin);
+        scanf("%s", strBuffer);
 
-        if(strcmp("y", strBuffer) == 0) break;
-        else if(strcmp("y", strBuffer) == 0)
+        if(strcmp("y", strBuffer) == 0)
+        {
+            printNewLine(1);
+            break;
+        }
+        else if(strcmp("n", strBuffer) == 0)
         {
             return 0;
         }
-
     }
+    getchar();
     
-
-    id = generateId();
-
     if (isTeacher)
     {
-        user->teacher->id = id;
+        user->teacher->id = generateId();
         user->teacher->dateOfBirth.MM = MM;
         user->teacher->dateOfBirth.DD = DD;
         user->teacher->dateOfBirth.YYYY = YYYY;
     }
     else
     {
-        user->student->id = id;
+        user->student->id = generateId();
         user->student->dateOfBirth.MM = MM;
         user->student->dateOfBirth.DD = DD;
         user->student->dateOfBirth.YYYY = YYYY;
     }
     getchar();
     
-    if (isTeacher)
+    if (isTeacher && saveTeacher(userToCsv))
     {
         strcpy(user->teacher->password, strBuffer);
         teacherToCsv(user->teacher, userToCsv);
-        saveTeacher(userToCsv);
-        savePassword(user->teacher->id, user->teacher->password);
-        
+        savePassword(user->teacher->id, passwordHolder);
+        printfSUCCESS("Registration Complete");
+        snprintf(strBuffer, sizeof(strBuffer) -1, "Your ID is %d", user->teacher->id);
+        printfSUCCESS(strBuffer);
     }
-    else
+    else if(!isTeacher && saveStudent(userToCsv))
     {
         strcpy(user->student->password, strBuffer);
         studentToCsv(user->student, userToCsv);
-        saveStudent(userToCsv);
-        savePassword(user->student->id, user->student->password);
+        savePassword(user->student->id, passwordHolder);
+        printfSUCCESS("Registration Complete");
+        snprintf(strBuffer, sizeof(strBuffer) -1, "Your ID is %d", user->student->id);
+        printfSUCCESS(strBuffer);
     }
-
-    printfSUCCESS("Registration Complete!!!");
-    snprintf(strBuffer, sizeof(strBuffer) -1, "Your ID is %d", id);
-    printfSUCCESS(strBuffer);
+    else
+    {
+        printfWARNNING("Registration failed, please try again");
+    }
+    
+    initStudent(user->student);
+    initTeacher(user->teacher);
+    return 1;
 }
 
 
@@ -253,6 +261,7 @@ int loginUser(User *user)
         resetColor();
         printf("Enter ID: ");
         fgetsm(strBuffer, sizeof(strBuffer), stdin);
+        if(exitFromCurrAction(strBuffer)) return 0;
 
         /*
         *   implement login by username
@@ -260,13 +269,13 @@ int loginUser(User *user)
         */
         
         sscanf(strBuffer, "%d", &id);
+        
         getPasswordById(id, passwordHolder);
-
+        
         printf("Enter password: ");
         fgetsm(strBuffer, sizeof(strBuffer), stdin);
 
-        sscanf(strBuffer, "%d", &id);
-        getPasswordById(id, passwordHolder);
+        if(exitFromCurrAction(strBuffer)) return 0;
 
         if (strcmp(passwordHolder, strBuffer) == 0) break;        
         printfWARNNING("Incorrect password or id.");
@@ -293,6 +302,6 @@ int loginUser(User *user)
         printfERROR("Please contact admin");
     }
     
-    
+    suppressErrMes(0);
     return 1;
 }
