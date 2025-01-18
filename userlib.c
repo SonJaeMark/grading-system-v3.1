@@ -164,11 +164,13 @@ int registerUser(User *user)
         user->student->dateOfBirth.YYYY = YYYY;
     }
     getchar();
+
+    if(isTeacher) teacherToCsv(user->teacher, userToCsv);
+    else studentToCsv(user->student, userToCsv);
     
     if (isTeacher && saveTeacher(userToCsv))
     {
         strcpy(user->teacher->password, strBuffer);
-        teacherToCsv(user->teacher, userToCsv);
         savePassword(user->teacher->id, passwordHolder);
         printfSUCCESS("Registration Complete");
         snprintf(strBuffer, sizeof(strBuffer) -1, "Your ID is %d", user->teacher->id);
@@ -177,7 +179,6 @@ int registerUser(User *user)
     else if(!isTeacher && saveStudent(userToCsv))
     {
         strcpy(user->student->password, strBuffer);
-        studentToCsv(user->student, userToCsv);
         savePassword(user->student->id, passwordHolder);
         printfSUCCESS("Registration Complete");
         snprintf(strBuffer, sizeof(strBuffer) -1, "Your ID is %d", user->student->id);
