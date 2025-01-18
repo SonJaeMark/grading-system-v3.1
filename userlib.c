@@ -25,6 +25,7 @@ int registerUser(User *user)
     int MM;
     int DD;
     int YYYY;
+    int saveInfo = 0;
 
     resetColor();
     printf("Registration:\n");
@@ -135,19 +136,27 @@ int registerUser(User *user)
     {
         printf("Save info?\n");
         printf("[y]Yes || [n]No: ");
+        setColor(BLUE_TEXT);
+
         scanf("%s", strBuffer);
+        // fgets(strBuffer, sizeof(strBuffer), stdin);
+        // strBuffer[strcspn(strBuffer, "\n")] = '\0';
+
+        if(exitFromCurrAction(strBuffer)) return 0;
 
         if(strcmp("y", strBuffer) == 0)
         {
-            printNewLine(1);
+            saveInfo = 1;
             break;
         }
         else if(strcmp("n", strBuffer) == 0)
         {
-            return 0;
+            break;
         }
+
+        resetColor();
     }
-    getchar();
+    printNewLine(1);
     
     if (isTeacher)
     {
@@ -189,8 +198,24 @@ int registerUser(User *user)
         printfWARNNING("Registration failed, please try again");
     }
     
-    initStudent(user->student);
-    initTeacher(user->teacher);
+    if(!saveInfo)
+    {
+        initStudent(user->student);
+        initTeacher(user->teacher);
+    }
+
+    if(saveInfo && isTeacher)
+    {
+        initStudent(user->student);
+        snprintf(strBuffer, sizeof(strBuffer) - 1, "Welcome %s %s!", user->teacher->fname, user->teacher->lname);
+        printfSUCCESS(strBuffer);
+    }
+    else if(saveInfo && !isTeacher)
+    {
+        initTeacher(user->teacher);
+        snprintf(strBuffer, sizeof(strBuffer) - 1, "Welcome %s %s!", user->student->fname, user->student->lname);
+        printfSUCCESS(strBuffer);
+    }
     return 1;
 }
 

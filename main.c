@@ -38,28 +38,6 @@ void readBanner()
 
 }
 
-
-
-int ask(char *q, char *ans1, char *ans0)
-{
-    char strBuffer[STR_CVS_LEN_IN];
-    while (1)
-    {
-        printf("%s: ", q);
-        fgetsm(strBuffer, STR_CVS_LEN_IN, stdin);
-
-        if(strcmp(ans1, strBuffer) == 0)
-        {
-            return 1;
-        }
-        else if (strcmp(ans0, strBuffer) == 0)
-        {
-            return 0;
-        }
-        
-    }
-}
-
 int main()
 {
     User user;
@@ -73,8 +51,6 @@ int main()
     initTeacher(user.teacher);
     
     char strBuffer[STR_CVS_LEN_IN];
-    char r[5] = "r";
-    char l[5] = "l";
     int action = 0;
 
     readBanner();
@@ -84,6 +60,8 @@ int main()
     {
         while(!user.student->id && !user.teacher->id)
         {
+            printNewLine(1);
+            
             printf("[l]Login || [r]Register: ");
             fgetsm(strBuffer, sizeof(strBuffer), stdin);
 
