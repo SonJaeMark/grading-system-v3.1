@@ -654,11 +654,12 @@ void printStudent(Student *student, int size)
 {
     int nameColLen = 30;
     int gradesColen = 10;
+    char remarks[5];
     char fullname[STR_CVS_LEN_OUT];
     float gradeHolder;
-    char lineSeparator[] = "+----------+------------------------------+----------+----------+----------+----------+----------+----------+----------+";
+    char lineSeparator[] = "+----------+------------------------------+----------+----------+----------+----------+----------+----------+----------+----------+";
     printf("%s\n",lineSeparator);
-    printf("|  id      |  name                        |  MATH    |  SCI     |  ENG     |  FIL     |  HIS     |  PE      |  AVE     |\n");
+    printf("|  id      |  name                        |  MATH    |  SCI     |  ENG     |  FIL     |  HIS     |  PE      |  AVE     |  REMARKS |\n");
     printf("%s\n",lineSeparator);
 
     for (int i = 0; i < size; i++)
@@ -717,10 +718,85 @@ void printStudent(Student *student, int size)
         printf("|");
         gradeHolder < 10 ? printf("    ") : gradeHolder == 100 ? printf("  ") : printf("   ");
         printf("%.2f  ", gradeHolder);
-         
+
+        // remarks
+        printf("|");
+        gradeRemarks(student, remarks);
+        printf("  %s     ", remarks);
+
         printf("|\n");
     }
     printf("%s\n",lineSeparator);
     
 }
 
+/**
+ * @brief Determines the grade remarks for a student based on their average grade.
+ * 
+ * This function calculates grade remarks based on the average grade (`AVE`) of a student.
+ * Special remarks such as "INC" (Incomplete) or "NF" (Not Found) are assigned when specific 
+ * conditions are met. Otherwise, letter grade remarks are assigned based on the rounded
+ * average.
+ * 
+ * @param student A pointer to the Student structure containing grade details.
+ * @param remarks A character array to store the remarks (e.g., "A", "B+", "INC").
+ * 
+ * @note If any of the individual subject grades (MATH, SCI, ENG, FIL, HIS, PE) is 0.0, 
+ *       the remark will be "INC". If the average grade (`AVE`) is 0.0, the remark will be "NF".
+ */
+void gradeRemarks(Student *student, char *remarks)
+{
+    // Calculate the average grade and round it to the nearest integer
+    float ave = student->grades.AVE;
+    int grades = (int) round(ave);
+
+    // Check if any subject grade is 0.0; if so, mark as "Incomplete"
+    if (student->grades.MATH == 0.0 ||
+        student->grades.SCI == 0.0 ||
+        student->grades.ENG == 0.0 ||
+        student->grades.FIL == 0.0 ||
+        student->grades.HIS == 0.0 ||
+        student->grades.PE == 0.0)
+    {
+        strcpy(remarks, "INC"); // Incomplete
+        return;
+    }
+
+    // If the average grade is 0.0, mark as "Not Failed"
+    if (ave == 0.0)
+    {
+        strcpy(remarks, "NF "); // Not Failed
+        return;
+    }
+
+    // Assign grade remarks based on the rounded average
+    switch (grades)
+    {
+        case 97 ... 100:
+            strcpy(remarks, "A  "); // Excellent
+            break;
+        case 94 ... 96:
+            strcpy(remarks, "A- "); // Very Good
+            break;
+        case 91 ... 93:
+            strcpy(remarks, "B+ "); // Good
+            break;
+        case 88 ... 90:
+            strcpy(remarks, "B  "); // Above Average
+            break;
+        case 85 ... 87:
+            strcpy(remarks, "B- "); // Average
+            break;
+        case 80 ... 84:
+            strcpy(remarks, "C+ "); // Satisfactory
+            break;
+        case 75 ... 79:
+            strcpy(remarks, "C  "); // Passing
+            break;
+        case 0 ... 74:
+            strcpy(remarks, "F  "); // Failing
+            break;
+        default:
+            break; // No action for unexpected values
+    }
+}

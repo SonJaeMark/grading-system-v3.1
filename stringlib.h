@@ -31,3 +31,4 @@ void teacherToCsv(Teacher *teacher, char teacherInCsv[STR_CVS_LEN_OUT]);
 int csvToStudent(char *studentInCsv, Student *student);
 int csvToTeacher(char *studentInCsv, Teacher *teacher);
 void printStudent(Student *student, int size);
+void gradeRemarks(Student *student, char *remarks);
