@@ -413,6 +413,13 @@ int removeStudentToClass(User *user)
     }
     studRetrievedCount = currentStudCount;
 
+    // exit if no student found
+    if(studRetrievedCount == 0)
+    {
+        printfWARNNING("No student found");
+        return 0;
+    }
+
     // Initialize the input IDs array to zero
     for (int i = 0; i < MAX_STUDENT_COUNT; i++)
     {
@@ -522,15 +529,26 @@ void viewGradesOfStudentById(User *user)
 {
     int isExit = 0;                // Flag to check if student ID is valid
     int inputIdsSize = MAX_STUDENT_COUNT;
+    int numOfStud = 0;
     char strBuffer[STR_CVS_LEN_OUT];
     int inputIds[inputIdsSize];
     int inputIdCount = 0;
     char buffer[STR_CVS_LEN_OUT];
 
+
     // Check if the user is a student
     if (user->student->id != 0)
     {
         printfWARNNING("You are not allowed to access this");
+        return;
+    }
+
+    // Retrieve all students linked to the teacher's ID
+    numOfStud = getAllStudentByTeacherId(user->teacher->id, user->student);
+
+    if(numOfStud == 0)
+    {
+        printfWARNNING("No student found");
         return;
     }
 
@@ -580,6 +598,7 @@ void giveGrades(User *user)
 {
     int isExit = 0;       
     int isFound = 0;         
+    int numOfStud = 0;
     int inputIdsSize = MAX_STUDENT_COUNT;
     char strBuffer[STR_CVS_LEN_OUT];
     int inputIds[inputIdsSize];
@@ -596,6 +615,15 @@ void giveGrades(User *user)
     if (user->student->id != 0)
     {
         printfWARNNING("You are not allowed to access this");
+        return;
+    }
+
+    // Retrieve all students linked to the teacher's ID
+    numOfStud = getAllStudentByTeacherId(user->teacher->id, user->student);
+
+    if(numOfStud == 0)
+    {
+        printfWARNNING("No student found");
         return;
     }
 
