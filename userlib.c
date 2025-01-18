@@ -18,7 +18,7 @@
  */
 int registerUser(User *user)
 {
-    char strBuffer[STR_CVS_LEN_IN];
+    char strBuffer[STR_CVS_LEN_OUT];
     char passwordHolder[STR_CVS_LEN_IN];
     char userToCsv[STR_CVS_LEN_OUT];
     int isTeacher = -1;
