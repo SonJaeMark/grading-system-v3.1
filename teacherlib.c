@@ -248,7 +248,7 @@ int addStudentToClass(User *user)
     {
         if (user->teacher->studentsList.studentId[i] != 0)
         {
-            studRetrieved[i] = user->teacher->studentsList.studentId[i];
+            studRetrieved[currentStudCount] = user->teacher->studentsList.studentId[i];
             currentStudCount++;
         }
     }
@@ -293,23 +293,8 @@ int addStudentToClass(User *user)
         }
         inputIdsHolderCount = inputIdsSize;
 
-        // test
-
-        for (int i = 0; i < studRetrievedCount; i++)
-        {
-            printf("studRetrieved[%d]: %d\n", i, studRetrieved[i]);
-        }
-        
-
         // Ensure the total count doesn't exceed the maximum allowed
         getUnique(studRetrieved, studRetrievedCount, inputIds, &inputIdsSize);
-
-        // test
-
-        for (int i = 0; i < inputIdsSize; i++)
-        {
-            printf("inputIds[%d]: %d\n", i, inputIds[i]);
-        }
 
         if (inputIdsSize + currentStudCount <= 10) break;
 
@@ -407,7 +392,7 @@ int removeStudentToClass(User *user)
     {
         if (user->teacher->studentsList.studentId[i] != 0)
         {
-            studRetrieved[i] = user->teacher->studentsList.studentId[i];
+            studRetrieved[currentStudCount] = user->teacher->studentsList.studentId[i];
             currentStudCount++;
         }
     }
@@ -451,7 +436,7 @@ int removeStudentToClass(User *user)
             inputIdsHolder[i] = inputIds[i];
         }
         inputIdsHolderCount = inputIdsSize;
-
+        
         // Ensure that the removal will not result in a negative student count
         getMatch(studRetrieved, studRetrievedCount, inputIds, &inputIdsSize);
         if (currentStudCount - inputIdsSize >= 0) break;
