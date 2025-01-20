@@ -642,30 +642,69 @@ void giveGrades(User *user)
     getStudentById(inputIds[0], user->student);
 
     // Prompt the teacher to enter grades for each subject
-    printf("Enter grades for each subject, type the subject and grades, for example 'MAT 98'.\n");
-    printf("[MAT]Math [SCI]Science [ENG]English [FIL]Filipino [HIS]History [PE]Physical Education.\n");
-    printf("Type [e]Exit to exit giving grades:\n");
+    printf("Enter grades for each subject, type the subject and grades, for example ");
+    setColor(BLUE_TEXT);
+    printf("'MAT 98'.\n");
+    printf("[MAT]");
+    resetColor();
+    printf("Math ");
 
-    for (int i = 0; i < NUM_GRADES; i++)
+    setColor(BLUE_TEXT);
+    printf("[SCI]");
+    resetColor();
+    printf("Science ");
+
+    setColor(BLUE_TEXT);
+    printf("[ENG]");
+    resetColor();
+    printf("English ");
+    
+    setColor(BLUE_TEXT);
+    printf("[FIL]");
+    resetColor();
+    printf("Filipino ");
+
+    setColor(BLUE_TEXT);
+    printf("[HIS]");
+    resetColor();
+    printf("History ");
+
+    setColor(BLUE_TEXT);
+    printf("[PE]");
+    resetColor();
+    printf("Physical Education.\n");
+
+    printf("Type ");
+
+    setColor(YELLOW_TEXT);
+    printf("[e]");
+    resetColor();
+    printf("Execute to execute giving grades:\n");
+
+    while (1)
     {
+        printNewLine(1);
         printf("Enter sub and grade: ");
         fgetsm(strBuffer, STR_CVS_LEN_OUT, stdin);
 
         if(exitFromCurrAction(strBuffer)) return;
         else if(strcmp("e", strBuffer) == 0) break;
 
-        sscanf(strBuffer, "%s %f", subject, &grade);
-
-        for(int i = 0; i < NUM_GRADES; i++)
+        if(sscanf(strBuffer, "%s %f", subject, &grade) == 2)
         {
-            if(strcmp(subjects[i], subject) == 0)
+            for(int i = 0; i < NUM_GRADES; i++)
             {
-                grades[i] = grade;
-                isFound = 1;
+                if(strcmp(subjects[i], subject) == 0 && grade > 60.0)
+                {
+                    grades[i] = grade;
+                    isFound = 1;
+                }
             }
         }
 
-        if(!isFound) printfWARNNING("Subject didn't recogized");
+        
+
+        if(!isFound) printfWARNNING("Format didn't recogized");
     }
 
 

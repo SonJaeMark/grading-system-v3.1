@@ -230,6 +230,7 @@ int registerUser(User *user)
  */
 int logoutUser(User *user)
 {
+    FILE *fptr = fopen(LOG_FILE, "w");
     char strBuffer[STR_CVS_LEN_IN];
     while (1)
     {
@@ -243,11 +244,12 @@ int logoutUser(User *user)
         {
             initTeacher(user->teacher);
             initStudent(user->student);
+            fprintf(fptr, "-1,000042");
             break;
         }
         else printfWARNNING("Enter [y] for yes and [n] for no");
     }
-    
+    fclose(fptr);
 }
 
 /**

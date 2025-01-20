@@ -12,6 +12,111 @@
 // disable all fgetsm in userfilelib 
 
 
+int rememberMe(User *user)
+{
+    char strBuff[STR_CVS_LEN_OUT];
+    int isTeacher = 0;
+    int returnFlag = 0;
+
+    if(user->teacher->id)
+    {
+        isTeacher = 1;
+    }
+    else if(user->student->id)
+    {
+        isTeacher = 0;
+    }
+
+    FILE *fptr = fopen(LOG_FILE, "w");
+    while (1)
+    {
+        printf("Remember me? [y]Yes || [n]No: ");
+        fgetsm(strBuff, sizeof(strBuff), stdin);
+
+        if(isTeacher && strcmp("y", strBuff) == 0)
+        {
+            fprintf(fptr, "%d,%d", isTeacher, user->teacher->id);
+            returnFlag = 1;
+            break;
+        }
+        else if(!isTeacher && strcmp("y", strBuff) == 0)
+        {
+            fprintf(fptr, "%d,%d", isTeacher, user->student->id);
+            returnFlag = 1;
+            break;
+        }
+        else if(strcmp("n", strBuff) == 0)
+        {
+            returnFlag = 1;
+            break;
+        }
+        else if (strcmp("b", strBuff) == 0)
+        {
+            returnFlag = 0;
+            break;
+        }
+        else
+        {
+            printfWARNNING("[n] for NO, [y] for YES and [b] for back");
+        }
+        
+    }
+    
+    fclose(fptr);
+    return returnFlag;
+}
+
+int getLoggedUser(User *user)
+{
+    FILE *fptr = fopen(LOG_FILE, "r");
+    char strBuff[STR_CVS_LEN_OUT];
+    char strBuffOut[MAX_FILE_LINE][STR_CVS_LEN_IN];
+    char *delim = ",";
+    int id = 0;
+    int isTeacher = -1;
+    int returnFlag = 0;
+    char fname[STR_CVS_LEN_IN];
+    char lname[STR_CVS_LEN_IN];
+
+    if(user->student->id != 0 || user->teacher->id != 0)
+    {
+        return 1;
+    }
+    if(fptr == NULL)
+    {
+        printfWARNNING("NO user yet");
+        return 0;
+    }
+    else if (fptr)
+    {
+        fgetsm(strBuff, sizeof(strBuff), fptr);
+    }
+
+    strSplit(strBuff, strBuffOut, delim);
+
+    sscanf(strBuffOut[0], "%d", &isTeacher);
+    sscanf(strBuffOut[1], "%d", &id);
+
+    suppressErrMes(0);
+
+    if(isTeacher  == 1 && getTeacherById(id, user->teacher))
+    {
+        strcpy(fname, user->teacher->fname);
+        strcpy(lname, user->teacher->lname);
+        returnFlag = 1;
+    }
+    else if (isTeacher == 0 && getStudentById(id, user->student))
+    {   
+        strcpy(fname, user->student->fname);
+        strcpy(lname, user->student->lname);
+        returnFlag = 1;
+    }
+    
+    snprintf(strBuff, sizeof(strBuff) - 1, "Welcome %s %s!", fname, lname);
+    if(returnFlag) printfSUCCESS(strBuff);
+    return returnFlag;
+}
+
 
 void readBanner()
 {
@@ -58,10 +163,12 @@ int main()
 
     while (1)
     {
-        while(!user.student->id && !user.teacher->id)
+        while(!getLoggedUser(&user) && !user.student->id && !user.teacher->id)
         {
             printNewLine(1);
             
+            resetColor();
+
             printf("[l]Login || [r]Register: ");
             fgetsm(strBuffer, sizeof(strBuffer), stdin);
 
@@ -95,6 +202,7 @@ int main()
                 case 1:
                     printNewLine(1);
                     logoutUser(&user);
+
                     break;
                 case 2:
                     printNewLine(1);
@@ -121,7 +229,7 @@ int main()
                     viewMyGrades(&user);
                     break;
                 case 8:
-                    return 0;
+                    if(rememberMe(&user)) return 0;
                 default:
                     printf("\n\n");
                     printf("input 1-7\n");
