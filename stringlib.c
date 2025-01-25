@@ -25,11 +25,11 @@ void printActionMenu()
 {
     resetColor();
     printNewLine(1);
-    printf("        : [1]Log out                         [2]View All My Students\n");
-    printf("        : [3]Add Student To Class            [4]Remove Student To Class\n");
-    printf("        : [5]View Grades Of Student By Id    [6]Give Grades\n"); 
-    printf("        : [7]View My Grades                  [8]Exit\n");
-    printf("Actions: ");
+    printf("          [1]Log out                         [2]View All My Students\n");
+    printf("          [3]Add Student To Class            [4]Remove Student To Class\n");
+    printf("          [5]View Grades Of Student By Id    [6]Give Grades\n"); 
+    printf("          [7]View My Grades                  [8]Exit\n");
+    printf("Action: ");
 }
 
 /**

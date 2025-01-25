@@ -158,6 +158,8 @@ int main()
     char strBuffer[STR_CVS_LEN_IN];
     int action = 0;
 
+    
+
     readBanner();
     resetColor();
 
